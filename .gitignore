@@ -1,4 +1,12 @@
+# Ignore everything else by default
 *
-
-!*ipynb
+# Allow .ipynb and .py files
+!*.ipynb
 !*.py
+
+# Allow files in subdirectories
+!*/
+!**/*.ipynb
+!**/*.py
+
+venv/**/*
