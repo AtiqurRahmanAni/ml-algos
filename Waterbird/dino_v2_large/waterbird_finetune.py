@@ -17,7 +17,9 @@ DEVICE
 
 
 def train(sample: str):
-    root_dir = "../../datasets/waterbird_augmented/resnet152_waterbird_features/"
+    saving_dir = "./trained/lr_00005_relu"
+    root_dir = "../../datasets/waterbird_augmented/dino_v2_large_features"
+    learning_rate = 0.00005
 
     class WaterbirdDatasetFeatures(Dataset):
         def __init__(self, dataset_path):
@@ -33,18 +35,13 @@ def train(sample: str):
             return feature, label
 
     batch_size = 64
-
-    saving_dir = "./trained/lr_00001_tanh"
-
-    train_filename = f'train_data_{sample}.npy'
     train_set = WaterbirdDatasetFeatures(
-        dataset_path=os.path.join(root_dir, train_filename))
+        dataset_path=os.path.join(root_dir, f'train_data_{sample}.npy'))
     train_loader = DataLoader(
         train_set, batch_size=batch_size, shuffle=True, pin_memory=True)
 
-    val_filename = 'val_data.npy'
     val_set = WaterbirdDatasetFeatures(
-        dataset_path=os.path.join(root_dir, val_filename))
+        dataset_path=os.path.join(root_dir, 'val_data.npy'))
     val_loader = DataLoader(val_set, batch_size=batch_size,
                             shuffle=False, pin_memory=True)
 
@@ -53,12 +50,12 @@ def train(sample: str):
             super(MLP, self).__init__()
             self.linear = nn.Sequential(nn.Linear(in_features=2048, out_features=1024, bias=False),
                                         nn.BatchNorm1d(num_features=1024),
-                                        nn.Tanh(),
+                                        nn.ReLU(),
                                         nn.Dropout(0.5, inplace=False),
                                         nn.Linear(in_features=1024,
                                                   out_features=512, bias=False),
                                         nn.BatchNorm1d(num_features=512),
-                                        nn.Tanh(),
+                                        nn.ReLU(),
                                         nn.Dropout(0.5, inplace=False),
                                         nn.Linear(in_features=512,
                                                   out_features=1, bias=True),
@@ -70,7 +67,6 @@ def train(sample: str):
 
     model = MLP().to(DEVICE)
 
-    learning_rate = 0.00001
     num_epoch = 20
     criterion = nn.BCELoss()
     optimizer = torch.optim.Adam(
@@ -136,7 +132,7 @@ def train(sample: str):
             if epoch_loss < min_loss:
                 min_loss = epoch_loss
                 torch.save(model.state_dict(), os.path.join(
-                    saving_dir, f"resnet150_augmented_{sample}.pth"))
+                    saving_dir, f"dino_v2_large_augmented_{sample}.pth"))
 
     train_statistics = {
         'train_loss': train_loss,
