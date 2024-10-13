@@ -150,7 +150,7 @@ def train(model,
             weight_decay=weight_decay,
             is_training=False)
 
-        logger.write(f'\Test:\n')
+        logger.write(f'\nTest:\n')
         if dataset['test_data'] is not None:
             test_loss_computer = LossComputer(
                 criterion,
