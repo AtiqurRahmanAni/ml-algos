@@ -17,9 +17,9 @@ DEVICE
 
 
 def train(sample: str):
-    saving_dir = "./trained/lr_00005_relu"
+    saving_dir = "./trained/lr_00001_relu"
     root_dir = "../../datasets/waterbird_augmented/dino_v2_large_features"
-    learning_rate = 0.00005
+    learning_rate = 0.00001
 
     class WaterbirdDatasetFeatures(Dataset):
         def __init__(self, dataset_path):
@@ -51,12 +51,12 @@ def train(sample: str):
             self.linear = nn.Sequential(nn.Linear(in_features=2048, out_features=1024, bias=False),
                                         nn.BatchNorm1d(num_features=1024),
                                         nn.ReLU(),
-                                        nn.Dropout(0.5, inplace=False),
+                                        # nn.Dropout(0.5, inplace=False),
                                         nn.Linear(in_features=1024,
                                                   out_features=512, bias=False),
                                         nn.BatchNorm1d(num_features=512),
                                         nn.ReLU(),
-                                        nn.Dropout(0.5, inplace=False),
+                                        # nn.Dropout(0.5, inplace=False),
                                         nn.Linear(in_features=512,
                                                   out_features=1, bias=True),
                                         nn.Sigmoid())
@@ -70,7 +70,7 @@ def train(sample: str):
     num_epoch = 20
     criterion = nn.BCELoss()
     optimizer = torch.optim.Adam(
-        model.parameters(), lr=learning_rate, weight_decay=1e-5)
+        model.parameters(), lr=learning_rate)
 
     train_loss = []
     val_loss = []
