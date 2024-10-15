@@ -125,10 +125,10 @@ class LossComputer:
         return group_loss, group_count
 
     def update_exp_avg_loss(self, group_loss, group_count):
-        prev_weights = (1 - self.gamma*(group_count > 0).float()
+        prev_weights = (1 - self.gamma * (group_count > 0).float()
                         ) * (self.exp_avg_initialized > 0).float()
         curr_weights = 1 - prev_weights
-        self.exp_avg_loss = self.exp_avg_loss * prev_weights + group_loss*curr_weights
+        self.exp_avg_loss = self.exp_avg_loss * prev_weights + group_loss * curr_weights
         self.exp_avg_initialized = (
             self.exp_avg_initialized > 0) + (group_count > 0)
 
@@ -147,17 +147,17 @@ class LossComputer:
         # avg group loss
         denom = self.processed_data_counts + group_count
         denom += (denom == 0).float()
-        prev_weight = self.processed_data_counts/denom
-        curr_weight = group_count/denom
-        self.avg_group_loss = prev_weight*self.avg_group_loss + curr_weight*group_loss
+        prev_weight = self.processed_data_counts / denom
+        curr_weight = group_count / denom
+        self.avg_group_loss = prev_weight * self.avg_group_loss + curr_weight * group_loss
 
         # avg group acc
-        self.avg_group_acc = prev_weight*self.avg_group_acc + curr_weight*group_acc
+        self.avg_group_acc = prev_weight * self.avg_group_acc + curr_weight * group_acc
 
         # batch-wise average actual loss
         denom = self.batch_count + 1
-        self.avg_actual_loss = (self.batch_count/denom) * \
-            self.avg_actual_loss + (1/denom)*actual_loss
+        self.avg_actual_loss = (self.batch_count / denom) * \
+            self.avg_actual_loss + (1 / denom) * actual_loss
 
         # counts
         self.processed_data_counts += group_count
@@ -170,8 +170,7 @@ class LossComputer:
         self.batch_count += 1
 
         # avg per-sample quantities
-        group_frac = self.processed_data_counts / \
-            (self.processed_data_counts.sum())
+        group_frac = self.processed_data_counts / self.processed_data_counts.sum()
         self.avg_per_sample_loss = group_frac @ self.avg_group_loss
         self.avg_acc = group_frac @ self.avg_group_acc
 

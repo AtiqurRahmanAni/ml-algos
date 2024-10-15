@@ -37,7 +37,7 @@ def main():
     set_seed(seed)
 
     train_data, val_data, test_data = get_confounder_splits(
-        data_dir="../datasets/waterbird", augment_data=False)
+        data_dir="D:/Programming/ML-Algos/datasets/waterbird", augment_data=False)
 
     loader_kwargs = {'batch_size': batch_size, 'pin_memory': False}
     train_loader = train_data.get_loader(
