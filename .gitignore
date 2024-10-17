@@ -10,4 +10,4 @@
 !**/*.py
 
 venv/**/*
-linuxenv/**/*
+linuxvenv/**/*
